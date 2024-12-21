@@ -22,13 +22,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
     private final UserService userService;
 
-    @GetMapping
+    @GetMapping("/myPage")
     public ResponseDto<UserResponseDto> get(@AuthenticationPrincipal LoginUser loginUser) {
         UserResponseDto user = userService.getUser(loginUser.getUser().getId());
         return new ResponseDto<>(ResponseDto.SUCCESS, "마이페이지 조회가 완료되었습니다.", user);
     }
 
-    @PatchMapping
+    @PatchMapping("/myPage")
     public ResponseDto<?> modifyPassword(@AuthenticationPrincipal LoginUser loginUser,
         @RequestBody @Valid PasswordChangeRequestDto passwordChangeRequestDto) {
         userService.modifyUserPassword(loginUser.getUser().getId(), passwordChangeRequestDto);
