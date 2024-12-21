@@ -1,4 +1,4 @@
-package com.sidenow.team.rightnow.user.dto;
+package com.sidenow.team.rightnow.user.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
