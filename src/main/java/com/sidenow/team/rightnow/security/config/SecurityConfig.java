@@ -62,23 +62,16 @@ public class SecurityConfig {
         // httpBasic 은 브라우저가 팝업창을 이용해서 사용자 인증을 진행한다. -> 비허용 할것임.
         http.httpBasic(hb->hb.disable());
 
+        http.authorizeHttpRequests(c ->
+            c
+                .requestMatchers("/api/auth/signup").permitAll()
+                .requestMatchers("/api/auth/login").permitAll()
+                .anyRequest().authenticated()
+        );
+
+
         // 필터 적용
         http.with(new CustomSecurityFilterManager(), c-> c.build());
-
-        // 로그아웃
-        http.logout(logout -> logout
-            .logoutUrl("/api/auth/logout")
-            .logoutSuccessUrl("/api/auth/login")
-            .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
-
-        );
-
-        http.authorizeHttpRequests(c ->
-                        c
-                                .requestMatchers("/api/auth/signup").permitAll()
-                                .requestMatchers("/api/auth/login").permitAll()
-                                .anyRequest().authenticated()
-        );
 
         // Exception 처리
         // 인증 실패
@@ -90,6 +83,13 @@ public class SecurityConfig {
         http.exceptionHandling(e -> e.accessDeniedHandler((request, response, accessDeniedException) -> {
             CustomResponseUtil.fail(response, "권한이 없습니다.", HttpStatus.FORBIDDEN);
         }));
+
+        // 로그아웃
+        http.logout(logout -> logout
+            .logoutUrl("/api/auth/logout")
+            .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
+
+        );
 
         return http.build();
     }
