@@ -1,7 +1,8 @@
-package com.sidenow.team.rightnow.security.controller;
+package com.sidenow.team.rightnow.user.controller;
 
 import com.sidenow.team.rightnow.global.ResponseDto;
-import com.sidenow.team.rightnow.security.service.AuthService;
+import com.sidenow.team.rightnow.user.dto.response.CreateUserResponseDto;
+import com.sidenow.team.rightnow.user.service.AuthService;
 import com.sidenow.team.rightnow.user.dto.request.CreateUserRequestDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,8 @@ public class AuthController {
 
   @PostMapping("/signup")
   public ResponseDto<?> create(@RequestBody @Valid CreateUserRequestDto request) {
-    return authService.createUser(request);
+    CreateUserResponseDto user = authService.createUser(request);
+    return new ResponseDto<>(ResponseDto.SUCCESS, "회원가입이 완료되었습니다.", user);
   }
+
 }

@@ -1,7 +1,9 @@
-package com.sidenow.team.rightnow.security.service;
+package com.sidenow.team.rightnow.user.service;
 
 import com.sidenow.team.rightnow.global.ResponseDto;
+import com.sidenow.team.rightnow.global.ex.CustomApiException;
 import com.sidenow.team.rightnow.user.dto.request.CreateUserRequestDto;
+import com.sidenow.team.rightnow.user.dto.response.CreateUserResponseDto;
 import com.sidenow.team.rightnow.user.entity.User;
 import com.sidenow.team.rightnow.user.entity.UserRole;
 import com.sidenow.team.rightnow.user.repository.UserRepository;
@@ -17,14 +19,14 @@ public class AuthService {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
 
-  public ResponseDto<?> createUser(CreateUserRequestDto request) {
+  public CreateUserResponseDto createUser(CreateUserRequestDto request) {
     // 이메일 중복확인
     if(userRepository.findByEmailAndDeletedFalse(request.getEmail()).isPresent()) {
-      return new ResponseDto<>(-1, "중복된 이메일입니다", null);
+      throw new CustomApiException("중복된 이메일입니다.");
     }
     // 닉네임 중복확인
     if(userRepository.findByNicknameAndDeletedFalse(request.getNickname()).isPresent()) {
-      return new ResponseDto<>(-1, "중복된 닉네임입니다", null);
+      throw new CustomApiException("중복된 닉네임입니다.");
     }
 
     User user = User.builder()
@@ -36,8 +38,8 @@ public class AuthService {
         .deleted(false)
         .build();
 
-    userRepository.save(user);
-    return new ResponseDto<>(1, "회원가입이 완료되었습니다", null);
+    User savedUser = userRepository.save(user);
+    return new CreateUserResponseDto(savedUser);
   }
 
 }
