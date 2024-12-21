@@ -40,4 +40,7 @@ public class User {
     @Column(nullable = false)
     private boolean deleted;
 
+    public void changePassword(String password) {
+        this.password = password;
+    }
 }
