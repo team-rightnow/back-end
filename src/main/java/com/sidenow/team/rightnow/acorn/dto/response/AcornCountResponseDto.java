@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class AcornResponseDto {
+public class AcornCountResponseDto {
   private Integer balance;
 
 }
