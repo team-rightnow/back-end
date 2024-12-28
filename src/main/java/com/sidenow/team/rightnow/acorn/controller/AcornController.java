@@ -20,10 +20,10 @@ public class AcornController {
 
   private final AcornService acornService;
 
-  @GetMapping("/{userId}")
+  @GetMapping("/acornCount")
   public ResponseDto<AcornResponseDto> get(@AuthenticationPrincipal LoginUser loginUser) {
     AcornResponseDto acorn = acornService.getAcorn(loginUser.getUser().getId());
-    return new ResponseDto<>(ResponseDto.SUCCESS, "도토리 조회가 완료되었습니다.", acorn);
+    return new ResponseDto<>(ResponseDto.SUCCESS, "도토리 잔액 조회가 완료되었습니다.", acorn);
 
   }
 }

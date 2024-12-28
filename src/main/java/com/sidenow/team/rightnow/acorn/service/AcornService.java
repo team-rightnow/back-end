@@ -17,11 +17,12 @@ public class AcornService {
   private final AcornRepository acornRepository;
   private final UserRepository userRepository;
 
-  public AcornResponseDto getAcorn(Long id) {
-    User user = userRepository.findByIdAndDeletedFalse(id).orElseThrow(
+  public AcornResponseDto getAcorn(Long userId) {
+    User user = userRepository.findByIdAndDeletedFalse(userId).orElseThrow(
         () -> new CustomApiException("존재하지 않는 userId 입니다.")
     );
     return new AcornResponseDto(user.getAcornCount());
-
   }
+
+  //public void depositAcorn(Long userId, )
 }
