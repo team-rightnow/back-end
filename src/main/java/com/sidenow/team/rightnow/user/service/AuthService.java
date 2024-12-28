@@ -35,6 +35,7 @@ public class AuthService {
         .nickname(request.getNickname())
         .userRole(UserRole.MEMBER)
         .birth(request.getBirth())
+        .acornCount(10)
         .deleted(false)
         .build();
 
