@@ -1,4 +1,4 @@
-package com.sidenow.team.rightnow.user.dto;
+package com.sidenow.team.rightnow.user.dto.request;
 
 import com.sidenow.team.rightnow.user.entity.User;
 import lombok.Getter;

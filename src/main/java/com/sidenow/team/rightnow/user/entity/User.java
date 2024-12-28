@@ -1,8 +1,6 @@
 package com.sidenow.team.rightnow.user.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,13 +19,13 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @Column(nullable = false)
     private String email;
 
-    @NotBlank
+    @Column(nullable = false)
     private String password;
 
-    @NotBlank
+    @Column(nullable = false)
     private String nickname;
 
     @Column(nullable = false)
@@ -37,7 +35,12 @@ public class User {
     @Temporal(TemporalType.DATE)
     private LocalDate birth;
 
-    @NotNull
-    private boolean useYn;
+    private String profileImageUrl;
 
+    @Column(nullable = false)
+    private boolean deleted;
+
+    public void changePassword(String password) {
+        this.password = password;
+    }
 }
