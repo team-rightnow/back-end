@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -17,6 +18,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
+    @Transactional(readOnly = true)
     public UserResponseDto getUser(Long id) {
         User user = userRepository.findByIdAndDeletedFalse(id).orElseThrow(
             ()-> new CustomApiException("존재하지 않는 userId 입니다.")
@@ -24,6 +26,7 @@ public class UserService {
         return new UserResponseDto(user);
     }
 
+    @Transactional
     public void modifyUserPassword(Long id, PasswordChangeRequestDto passwordChangeRequestDto) {
         User user = userRepository.findByIdAndDeletedFalse(id).orElseThrow(
             ()-> new CustomApiException("존재하지 않는 userId 입니다.")

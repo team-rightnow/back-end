@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -19,6 +20,7 @@ public class AuthService {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
 
+  @Transactional
   public CreateUserResponseDto createUser(CreateUserRequestDto request) {
     // 이메일 중복확인
     if(userRepository.findByEmailAndDeletedFalse(request.getEmail()).isPresent()) {
