@@ -3,6 +3,7 @@ package com.sidenow.team.rightnow.acorn.controller;
 
 import com.sidenow.team.rightnow.acorn.dto.request.AcornRequestDto;
 import com.sidenow.team.rightnow.acorn.dto.response.AcornCountResponseDto;
+import com.sidenow.team.rightnow.acorn.dto.response.AcornResponseDto;
 import com.sidenow.team.rightnow.acorn.service.AcornService;
 import com.sidenow.team.rightnow.global.ResponseDto;
 import com.sidenow.team.rightnow.global.ex.CustomApiException;
@@ -10,6 +11,8 @@ import com.sidenow.team.rightnow.security.config.auth.LoginUser;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,7 +35,11 @@ public class AcornController {
     return new ResponseDto<>(ResponseDto.SUCCESS, "도토리 잔액 조회가 완료되었습니다.", acorn);
   }
 
-  @GetMapping("")
+  @GetMapping
+  public Page<AcornResponseDto> getAll(@AuthenticationPrincipal LoginUser loginUser, Pageable pageable) {
+    return acornService.getAllAcorn(loginUser.getUser().getId(), pageable);
+  }
+
 
   // 트랜잭션 생성용 컨트롤러, 실제 서비스에선 필요 없음
   @PostMapping("/test")

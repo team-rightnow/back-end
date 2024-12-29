@@ -1,6 +1,7 @@
 package com.sidenow.team.rightnow.acorn.service;
 
 import com.sidenow.team.rightnow.acorn.dto.response.AcornCountResponseDto;
+import com.sidenow.team.rightnow.acorn.dto.response.AcornResponseDto;
 import com.sidenow.team.rightnow.acorn.entity.Acorn;
 import com.sidenow.team.rightnow.acorn.repository.AcornRepository;
 import com.sidenow.team.rightnow.global.ex.CustomApiException;
@@ -8,6 +9,9 @@ import com.sidenow.team.rightnow.user.entity.User;
 import com.sidenow.team.rightnow.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,4 +65,14 @@ public class AcornService {
     acornRepository.save(acorn);
   }
 
+  @Transactional(readOnly = true)
+  public Page<AcornResponseDto> getAllAcorn(Long userId, Pageable pageable) {
+    int size =pageable.getPageSize();
+
+    pageable = PageRequest.of(pageable.getPageNumber(), size);
+
+    Page<Acorn> acorns = acornRepository.findAllByUserId(userId, pageable);
+
+    return acorns.map(AcornResponseDto::new);
+  }
 }
