@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import org.springframework.transaction.annotation.Transactional;
 
 @Entity(name = "users")
 @NoArgsConstructor
@@ -35,12 +36,23 @@ public class User {
     @Temporal(TemporalType.DATE)
     private LocalDate birth;
 
+    @Column(nullable = false)
+    private Integer acornCount;
+
     private String profileImageUrl;
 
     @Column(nullable = false)
-    private boolean deleted;
+    private boolean deleted = false;
 
     public void changePassword(String password) {
         this.password = password;
+    }
+
+    public void depositAcorn(Integer deposit) {
+        this.acornCount += deposit;
+    }
+
+    public void withdrawAcorn(Integer withdraw) {
+        this.acornCount -= withdraw;
     }
 }
