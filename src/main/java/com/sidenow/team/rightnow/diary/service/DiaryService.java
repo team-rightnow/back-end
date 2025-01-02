@@ -2,15 +2,19 @@ package com.sidenow.team.rightnow.diary.service;
 
 import com.sidenow.team.rightnow.diary.dto.request.CreateDiaryRequestDto;
 import com.sidenow.team.rightnow.diary.dto.request.UpdateDiaryRequestDto;
+import com.sidenow.team.rightnow.diary.dto.response.DiaryResponseDto;
 import com.sidenow.team.rightnow.diary.entity.Diary;
 import com.sidenow.team.rightnow.diary.repository.DiaryRepository;
 import com.sidenow.team.rightnow.global.ResponseDto;
 import com.sidenow.team.rightnow.global.ex.CustomApiException;
 import com.sidenow.team.rightnow.user.entity.User;
 import com.sidenow.team.rightnow.user.repository.UserRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -81,5 +85,17 @@ public class DiaryService {
         diaryRepository.save(diary);
 
         return new ResponseDto<>(ResponseDto.SUCCESS, "다이어리가 복구되었습니다.", null);
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseDto<DiaryResponseDto> findByUserIdAndDate(Long userId, LocalDate date) {
+        List<Diary> diaries = diaryRepository.findByUserIdAndDeletedFalse(userId);
+
+        Diary diary = diaries.stream()
+                .filter(d -> d.getCreatedDate().toLocalDate().equals(date))
+                .findFirst()
+                .orElseThrow(() -> new CustomApiException("해당 날짜의 다이어리가 없습니다."));
+
+        return new ResponseDto<>(ResponseDto.SUCCESS, "다이어리 조회에 성공했습니다.", DiaryResponseDto.from(diary));
     }
 }
