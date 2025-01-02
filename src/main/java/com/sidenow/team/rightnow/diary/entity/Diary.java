@@ -29,9 +29,10 @@ public class Diary extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
+    @Setter
     @Builder.Default
     @Column(nullable = false)
-    private Boolean deleted = false;
+    private boolean deleted = false;
 
     @Column(nullable = false)
     private Integer temperature;
@@ -45,9 +46,5 @@ public class Diary extends BaseEntity {
         this.content = content;
         this.innerPage = innerPage;
         this.temperature = temperature;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 }
