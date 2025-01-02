@@ -7,6 +7,7 @@ import com.sidenow.team.rightnow.diary.entity.Diary;
 import com.sidenow.team.rightnow.diary.repository.DiaryRepository;
 import com.sidenow.team.rightnow.global.ResponseDto;
 import com.sidenow.team.rightnow.global.ex.CustomApiException;
+import com.sidenow.team.rightnow.global.ex.ResponseMessages;
 import com.sidenow.team.rightnow.user.entity.User;
 import com.sidenow.team.rightnow.user.repository.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +27,7 @@ public class DiaryService {
     @Transactional
     public ResponseDto<Void> createDiary(CreateDiaryRequestDto request, Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomApiException("유효하지 않는 사용자입니다."));
+                .orElseThrow(() -> new CustomApiException(ResponseMessages.INVALID_USER));
 
         Diary diary = Diary.builder()
                 .user(user)
@@ -39,52 +40,52 @@ public class DiaryService {
 
         diaryRepository.save(diary);
 
-        return new ResponseDto<>(ResponseDto.SUCCESS, "다이어리가 생성되었습니다.", null);
+        return new ResponseDto<>(ResponseDto.SUCCESS, ResponseMessages.DIARY_CREATED_SUCCESS, null);
     }
 
     @Transactional
     public ResponseDto<Void> updateDiary(Long diaryId, UpdateDiaryRequestDto request, Long userId) {
         Diary diary = diaryRepository.findById(diaryId)
-                .orElseThrow(() -> new CustomApiException("다이어리를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomApiException(ResponseMessages.DIARY_NOT_FOUND));
 
         if (!diary.getUser().getId().equals(userId)) {
-            throw new CustomApiException("수정 권한이 없습니다.");
+            throw new CustomApiException(ResponseMessages.DIARY_PERMISSION_DENIED);
         }
 
         diary.updateDiary(request.getTitle(), request.getContent(), request.getInnerPage(), request.getTemperature());
         diaryRepository.save(diary);
 
-        return new ResponseDto<>(ResponseDto.SUCCESS, "다이어리가 수정되었습니다.", null);
+        return new ResponseDto<>(ResponseDto.SUCCESS, ResponseMessages.DIARY_UPDATED_SUCCESS, null);
     }
 
     @Transactional
     public ResponseDto<Void> deleteDiary(Long diaryId, Long userId) {
         Diary diary = diaryRepository.findById(diaryId)
-                .orElseThrow(() -> new CustomApiException("다이어리를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomApiException(ResponseMessages.DIARY_NOT_FOUND));
 
         if (!diary.getUser().getId().equals(userId)) {
-            throw new CustomApiException("삭제 권한이 없습니다.");
+            throw new CustomApiException(ResponseMessages.DIARY_PERMISSION_DENIED);
         }
 
         diary.setDeleted(true);
         diaryRepository.save(diary);
 
-        return new ResponseDto<>(ResponseDto.SUCCESS, "다이어리가 삭제되었습니다.", null);
+        return new ResponseDto<>(ResponseDto.SUCCESS, ResponseMessages.DIARY_DELETED_SUCCESS, null);
     }
 
     @Transactional
     public ResponseDto<Void> restoreDiary(Long diaryId, Long userId) {
         Diary diary = diaryRepository.findById(diaryId)
-                .orElseThrow(() -> new CustomApiException("다이어리를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomApiException(ResponseMessages.DIARY_NOT_FOUND));
 
         if (!diary.getUser().getId().equals(userId)) {
-            throw new CustomApiException("복구 권한이 없습니다.");
+            throw new CustomApiException(ResponseMessages.DIARY_PERMISSION_DENIED);
         }
 
         diary.setDeleted(false);
         diaryRepository.save(diary);
 
-        return new ResponseDto<>(ResponseDto.SUCCESS, "다이어리가 복구되었습니다.", null);
+        return new ResponseDto<>(ResponseDto.SUCCESS, ResponseMessages.DIARY_RESTORE_SUCCESS, null);
     }
 
     @Transactional(readOnly = true)
@@ -94,8 +95,8 @@ public class DiaryService {
         Diary diary = diaries.stream()
                 .filter(d -> d.getCreatedDate().toLocalDate().equals(date))
                 .findFirst()
-                .orElseThrow(() -> new CustomApiException("해당 날짜의 다이어리가 없습니다."));
+                .orElseThrow(() -> new CustomApiException(ResponseMessages.DIARY_NOT_FOUND));
 
-        return new ResponseDto<>(ResponseDto.SUCCESS, "다이어리 조회에 성공했습니다.", DiaryResponseDto.from(diary));
+        return new ResponseDto<>(ResponseDto.SUCCESS, ResponseMessages.DIARY_FETCH_SUCCESS, DiaryResponseDto.from(diary));
     }
 }
