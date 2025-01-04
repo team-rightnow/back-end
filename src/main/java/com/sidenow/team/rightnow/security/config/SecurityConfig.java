@@ -4,7 +4,6 @@ import com.sidenow.team.rightnow.global.ex.CustomResponseUtil;
 import com.sidenow.team.rightnow.security.config.jwt.JwtAuthenticationFilter;
 import com.sidenow.team.rightnow.security.config.jwt.JwtAuthorizationFilter;
 import com.sidenow.team.rightnow.user.entity.UserRole;
-import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -14,10 +13,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -32,6 +29,7 @@ public class SecurityConfig {
     }
 
     // JWT 필터 등록이 필요함.
+    // AbstractHttpConfigurer<본인 클래스명, HttpSecurity>
     public class CustomSecurityFilterManager extends AbstractHttpConfigurer<CustomSecurityFilterManager, HttpSecurity> {
         @Override
         public void configure(HttpSecurity builder) throws Exception {
@@ -49,6 +47,7 @@ public class SecurityConfig {
     // JWT 서버를 만들 예정. 그래서 Session 사용 안할거임.
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        log.debug("디버그 : filterChain 빈 등록됨");
         http.headers(h -> h.frameOptions(f -> f.sameOrigin()));
         http.csrf(cf->cf.disable());
 
@@ -62,16 +61,9 @@ public class SecurityConfig {
         // httpBasic 은 브라우저가 팝업창을 이용해서 사용자 인증을 진행한다. -> 비허용 할것임.
         http.httpBasic(hb->hb.disable());
 
-        http.authorizeHttpRequests(c ->
-            c
-                .requestMatchers("/api/auth/signup").permitAll()
-                .requestMatchers("/api/auth/login").permitAll()
-                .anyRequest().authenticated()
-        );
-
-
         // 필터 적용
         http.with(new CustomSecurityFilterManager(), c-> c.build());
+
 
         // Exception 처리
         // 인증 실패
@@ -84,11 +76,11 @@ public class SecurityConfig {
             CustomResponseUtil.fail(response, "권한이 없습니다.", HttpStatus.FORBIDDEN);
         }));
 
-        // 로그아웃
-        http.logout(logout -> logout
-            .logoutUrl("/api/auth/logout")
-            .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
-
+        http.authorizeHttpRequests(c ->
+                        c
+                                .requestMatchers("/api/auth/signup").permitAll()
+                                .requestMatchers("/api/auth/login").permitAll()
+                                .anyRequest().authenticated()
         );
 
         return http.build();
