@@ -1,14 +1,13 @@
 package com.sidenow.team.rightnow.user.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import org.springframework.transaction.annotation.Transactional;
 
 @Entity(name = "users")
 @NoArgsConstructor
@@ -21,23 +20,40 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @Column(nullable = false)
     private String email;
 
-    @NotBlank
+    @Column(nullable = false)
     private String password;
 
-    @NotBlank
+    @Column(nullable = false)
     private String nickname;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
+    @Column(nullable = false)
     @Temporal(TemporalType.DATE)
     private LocalDate birth;
 
-    @NotNull
-    private boolean useYn;
+    @Column(nullable = false)
+    private Integer acornCount;
 
+    private String profileImageUrl;
+
+    @Column(nullable = false)
+    private boolean deleted = false;
+
+    public void changePassword(String password) {
+        this.password = password;
+    }
+
+    public void depositAcorn(Integer deposit) {
+        this.acornCount += deposit;
+    }
+
+    public void withdrawAcorn(Integer withdraw) {
+        this.acornCount -= withdraw;
+    }
 }
