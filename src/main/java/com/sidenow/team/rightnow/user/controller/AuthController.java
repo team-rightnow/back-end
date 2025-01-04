@@ -20,7 +20,7 @@ public class AuthController {
   private final AuthService authService;
 
   @PostMapping("/signup")
-  public ResponseDto<?> create(@RequestBody @Valid CreateUserRequestDto request) {
+  public ResponseDto<CreateUserResponseDto> create(@RequestBody @Valid CreateUserRequestDto request) {
     CreateUserResponseDto user = authService.createUser(request);
     return new ResponseDto<>(ResponseDto.SUCCESS, "회원가입이 완료되었습니다.", user);
   }
