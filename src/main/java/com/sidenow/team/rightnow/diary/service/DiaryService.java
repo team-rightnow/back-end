@@ -89,6 +89,16 @@ public class DiaryService {
     }
 
     @Transactional(readOnly = true)
+    public ResponseDto<List<DiaryResponseDto>> findByUserIdAndDateRange(Long userId, LocalDate startDate, LocalDate endDate) {
+        List<Diary> diaries = diaryRepository.findAllByUserIdAndCreatedDateBetween(userId, startDate.atStartOfDay(), endDate.atStartOfDay());
+        List<DiaryResponseDto> responseDtos = diaries.stream()
+                .map(DiaryResponseDto::from)
+                .toList();
+
+        return new ResponseDto<>(ResponseDto.SUCCESS, ResponseMessages.DIARY_FETCH_SUCCESS, responseDtos);
+    }
+
+    @Transactional(readOnly = true)
     public ResponseDto<DiaryResponseDto> findByUserIdAndDate(Long userId, LocalDate date) {
         List<Diary> diaries = diaryRepository.findByUserIdAndDeletedFalse(userId);
 
