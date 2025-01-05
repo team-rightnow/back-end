@@ -12,8 +12,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/diary")
@@ -47,6 +49,21 @@ public class DiaryController {
             @PathVariable Long diaryId,
             @AuthenticationPrincipal LoginUser loginUser) {
         return diaryService.restoreDiary(diaryId, loginUser.getUser().getId());
+    }
+
+    @GetMapping("/month/{year}/{month}")
+    public ResponseDto<List<DiaryResponseDto>> getDiaryByMonth(
+            @PathVariable int year,
+            @PathVariable int month,
+            @AuthenticationPrincipal LoginUser loginUser) {
+        try {
+            LocalDate startOfMonth = LocalDate.of(year, month, 1);
+            LocalDate endOfMonth = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth());
+
+            return diaryService.findByUserIdAndDateRange(loginUser.getUser().getId(), startOfMonth, endOfMonth);
+        } catch (DateTimeException e) {
+            throw new CustomApiException("잘못된 년도 또는 월 형식입니다. (yyyy/MM)");
+        }
     }
 
     @GetMapping("/{date}")
