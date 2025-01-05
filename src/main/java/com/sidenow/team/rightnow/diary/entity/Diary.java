@@ -32,7 +32,7 @@ public class Diary extends BaseEntity {
     @Setter
     @Builder.Default
     @Column(nullable = false)
-    private boolean deleted = false;
+    private Boolean deleted = false;
 
     @Column(nullable = false)
     private Integer temperature;
