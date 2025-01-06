@@ -22,7 +22,6 @@ public class JwtProcess {
                 .withClaim("userId", loginUser.getUser().getId())
                 .withClaim("role", loginUser.getUser().getUserRole()+"") // 문자열 캐스팅
                 .sign(Algorithm.HMAC512(JwtVO.SECRET));
-        log.info("토큰 생성 확인 = "+ JwtVO.TOKEN_PREFIX+jwtToken);
         return JwtVO.TOKEN_PREFIX+jwtToken;
     }
 
@@ -34,7 +33,6 @@ public class JwtProcess {
         String role = decodedJWT.getClaim("role").asString();
         User user = User.builder().id(id).userRole(UserRole.valueOf(role)).build();
         LoginUser loginUser = new LoginUser(user);
-        log.info("토큰 검증 확인 = "+ loginUser.getUser().getNickname());
         return loginUser;
     }
 }
