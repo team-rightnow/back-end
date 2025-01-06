@@ -1,12 +1,15 @@
 package com.sidenow.team.rightnow.character.entity;
 
 
+import com.sidenow.team.rightnow.user.entity.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity(name = "characters")
 @Getter
+@NoArgsConstructor
 public class Character {
 
     @Id
@@ -17,30 +20,17 @@ public class Character {
     @Enumerated(EnumType.STRING)
     private String character;
 
-    @NotBlank
-    private String userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    public Character() {
-
-    }
-
-    public Character(long id, String character, String userId) {
-        this.id = id;
+    public Character(String character, User user) {
         this.character = character;
-        this.userId = userId;
-    }
-
-    public Character(String character, String userId) {
-        this.character = character;
-        this.userId = userId;
-    }
-
-    public static Character toEntity(Character character, Long id) {
-        return  new Character(id, character.character, character.userId);
+        this.user = user;
     }
 
     public void update(Character newCharacter){
         this.character = newCharacter.character;
-        this.userId = newCharacter.userId;
+
     }
 }
