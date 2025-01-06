@@ -1,4 +1,4 @@
-package com.sidenow.team.rightnow.user.dto;
+package com.sidenow.team.rightnow.user.dto.request;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Temporal;
@@ -19,7 +19,6 @@ import java.time.LocalDate;
 @ToString
 @Builder
 public class CreateUserRequestDto {
-
     @NotBlank
     @Email
     private String email;
