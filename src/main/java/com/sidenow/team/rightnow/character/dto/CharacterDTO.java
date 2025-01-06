@@ -1,5 +1,6 @@
 package com.sidenow.team.rightnow.character.dto;
 
+import com.sidenow.team.rightnow.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,21 +16,21 @@ import com.sidenow.team.rightnow.character.entity.Charactertype;
 public class CharacterDTO {
     private Long id;
     private String character;
-    private String userId;
+    private Long userId;
 
     public static CharacterDTO fromEntity(Character character){
         return new CharacterDTO(
                 character.getId(),
                 character.getCharacter(),
-                character.getUserId()
+                character.getUser().getId()
         );
     }
 
-    public Character toEntity() {
+    public Character toEntity(User user) {
         return new Character(
-                this.id,
                 this.character,
-                this.userId
+                user
         );
     }
 }
+
