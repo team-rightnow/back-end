@@ -37,7 +37,7 @@ public class CharacterController {
         this.characterService = characterService;
     }
 
-    @PostMapping("characters")
+    @PostMapping("/characters")
     public ResponseDto<Void> createCharacter(
             @AuthenticationPrincipal LoginUser loginUser,
             @RequestBody CharacterDTO characterDTO) {
@@ -49,7 +49,7 @@ public class CharacterController {
         }
 
     }
-    @GetMapping("/selection")
+    @GetMapping("/characters/selection")
     public ResponseDto<Page<CharacterDTO>> getCharacter(
             @AuthenticationPrincipal LoginUser loginUser, Pageable pageable) {
         Page<CharacterDTO> characters = characterService.getCharacter(loginUser.getUser().getId(), pageable);
