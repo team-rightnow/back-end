@@ -90,9 +90,9 @@ public class DiaryService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseDto<List<DiaryResponseDto>> findByUserIdAndDateRange(Long userId, LocalDate startDate, LocalDate endDate) {
+    public ResponseDto<List<DiaryResponseDto>> findByUserIdAndDateRange(Long userId, int year, int month) {
         Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
-        List<Diary> diaries = diaryRepository.findAllByUserIdAndCreatedDateBetween(userId, startDate.atStartOfDay(), endDate.atStartOfDay(), sort);
+        List<Diary> diaries = diaryRepository.findByUserAndYearMonth(userId, year, month);
         List<DiaryResponseDto> responseDtos = diaries.stream()
                 .map(DiaryResponseDto::from)
                 .toList();
