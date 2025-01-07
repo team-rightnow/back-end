@@ -10,6 +10,7 @@ import com.sidenow.team.rightnow.global.ex.CustomApiException;
 import com.sidenow.team.rightnow.global.ex.ResponseMessages;
 import com.sidenow.team.rightnow.user.entity.User;
 import com.sidenow.team.rightnow.user.repository.UserRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -90,7 +91,8 @@ public class DiaryService {
 
     @Transactional(readOnly = true)
     public ResponseDto<List<DiaryResponseDto>> findByUserIdAndDateRange(Long userId, LocalDate startDate, LocalDate endDate) {
-        List<Diary> diaries = diaryRepository.findAllByUserIdAndCreatedDateBetween(userId, startDate.atStartOfDay(), endDate.atStartOfDay());
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
+        List<Diary> diaries = diaryRepository.findAllByUserIdAndCreatedDateBetween(userId, startDate.atStartOfDay(), endDate.atStartOfDay(), sort);
         List<DiaryResponseDto> responseDtos = diaries.stream()
                 .map(DiaryResponseDto::from)
                 .toList();
