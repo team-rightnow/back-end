@@ -12,5 +12,11 @@ import java.util.List;
 
 public interface DiaryRepository extends JpaRepository<Diary, Long> {
     List<Diary> findByUserIdAndDeletedFalse(Long userId);
-    List<Diary> findAllByUserIdAndCreatedDateBetween(Long user_id, LocalDateTime createdDate, LocalDateTime createdDate2, Sort sort);
+
+    @Query("SELECT d FROM Diary d " +
+            "WHERE d.user.id = :userId " +
+            "AND FUNCTION('YEAR', d.createdDate) = :year " +
+            "AND FUNCTION('MONTH', d.createdDate) = :month " +
+            "ORDER BY d.createdDate DESC")
+    List<Diary> findByUserAndYearMonth(@Param("userId") Long userId, @Param("year") int year, @Param("month") int month);
 }

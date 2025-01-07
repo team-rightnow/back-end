@@ -56,14 +56,8 @@ public class DiaryController {
             @PathVariable int year,
             @PathVariable int month,
             @AuthenticationPrincipal LoginUser loginUser) {
-        try {
-            LocalDate startOfMonth = LocalDate.of(year, month, 1);
-            LocalDate endOfMonth = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth());
 
-            return diaryService.findByUserIdAndDateRange(loginUser.getUser().getId(), startOfMonth, endOfMonth);
-        } catch (DateTimeException e) {
-            throw new CustomApiException("잘못된 년도 또는 월 형식입니다. (yyyy/MM)");
-        }
+        return diaryService.findByUserIdAndDateRange(loginUser.getUser().getId(), year, month);
     }
 
     @GetMapping("/{date}")
