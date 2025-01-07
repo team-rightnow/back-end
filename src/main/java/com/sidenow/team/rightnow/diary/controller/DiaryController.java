@@ -6,13 +6,13 @@ import com.sidenow.team.rightnow.diary.dto.response.DiaryResponseDto;
 import com.sidenow.team.rightnow.diary.service.DiaryService;
 import com.sidenow.team.rightnow.global.ResponseDto;
 import com.sidenow.team.rightnow.global.ex.CustomApiException;
+import com.sidenow.team.rightnow.global.ex.ResponseMessages;
 import com.sidenow.team.rightnow.security.config.auth.LoginUser;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
@@ -51,13 +51,25 @@ public class DiaryController {
         return diaryService.restoreDiary(diaryId, loginUser.getUser().getId());
     }
 
+    @GetMapping("/dates/{year}/{month}")
+    public ResponseDto<List<String>> getDiaryDatesByMonth(
+            @PathVariable int year,
+            @PathVariable int month,
+            @AuthenticationPrincipal LoginUser loginUser
+    ) {
+        if (month < 1 || month > 12) throw new CustomApiException(ResponseMessages.INVALID_MONTH);
+
+        return diaryService.findDiaryDatesByYearAndMonth(loginUser.getUser().getId(), year, month);
+    }
+
     @GetMapping("/month/{year}/{month}")
     public ResponseDto<List<DiaryResponseDto>> getDiaryByMonth(
             @PathVariable int year,
             @PathVariable int month,
             @AuthenticationPrincipal LoginUser loginUser) {
+        if (month < 1 || month > 12) throw new CustomApiException(ResponseMessages.INVALID_MONTH);
 
-        return diaryService.findByUserIdAndDateRange(loginUser.getUser().getId(), year, month);
+        return diaryService.findByUserIdAndYearMonth(loginUser.getUser().getId(), year, month);
     }
 
     @GetMapping("/{date}")

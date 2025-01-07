@@ -89,9 +89,20 @@ public class DiaryService {
         return new ResponseDto<>(ResponseDto.SUCCESS, ResponseMessages.DIARY_RESTORE_SUCCESS, null);
     }
 
+
     @Transactional(readOnly = true)
-    public ResponseDto<List<DiaryResponseDto>> findByUserIdAndDateRange(Long userId, int year, int month) {
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
+    public ResponseDto<List<String>> findDiaryDatesByYearAndMonth(Long userId, int year, int month) {
+        List<Diary> diaries = diaryRepository.findByUserAndYearMonth(userId, year, month);
+        List<String> dates = diaries.stream()
+                .map(diary -> diary.getCreatedDate().toLocalDate().toString())
+                .distinct()
+                .toList();
+
+        return new ResponseDto<>(ResponseDto.SUCCESS, ResponseMessages.DIARY_FETCH_SUCCESS, dates);
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseDto<List<DiaryResponseDto>> findByUserIdAndYearMonth(Long userId, int year, int month) {
         List<Diary> diaries = diaryRepository.findByUserAndYearMonth(userId, year, month);
         List<DiaryResponseDto> responseDtos = diaries.stream()
                 .map(DiaryResponseDto::from)
