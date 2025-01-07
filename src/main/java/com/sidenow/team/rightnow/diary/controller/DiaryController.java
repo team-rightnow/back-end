@@ -83,4 +83,12 @@ public class DiaryController {
             throw new CustomApiException("잘못된 날짜 형식입니다. (yyyy-MM-dd)");
         }
     }
+
+    @GetMapping("/search/{keyword}")
+    public ResponseDto<List<DiaryResponseDto>> getDiaryByKeyword(
+            @PathVariable String keyword,
+            @AuthenticationPrincipal LoginUser loginUser
+    ) {
+        return diaryService.findByUserIdAndKeyword(loginUser.getUser().getId(), keyword);
+    }
 }

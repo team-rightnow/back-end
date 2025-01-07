@@ -122,4 +122,14 @@ public class DiaryService {
 
         return new ResponseDto<>(ResponseDto.SUCCESS, ResponseMessages.DIARY_FETCH_SUCCESS, DiaryResponseDto.from(diary));
     }
+
+    @Transactional(readOnly = true)
+    public ResponseDto<List<DiaryResponseDto>> findByUserIdAndKeyword(Long userId, String keyword) {
+        List<Diary> diaries = diaryRepository.findByUserIdAndTitleContainingOrUserIdAndContentContainingAndDeletedFalse(userId, keyword, keyword);
+        List<DiaryResponseDto> responseDtos = diaries.stream()
+                .map(DiaryResponseDto::from)
+                .toList();
+
+        return new ResponseDto<>(ResponseDto.SUCCESS, ResponseMessages.DIARY_FETCH_SUCCESS, responseDtos);
+    }
 }

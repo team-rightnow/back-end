@@ -18,4 +18,7 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
             "AND FUNCTION('YEAR', d.createdDate) = :year " +
             "AND FUNCTION('MONTH', d.createdDate) = :month ")
     List<Diary> findByUserAndYearMonth(@Param("userId") Long userId, @Param("year") int year, @Param("month") int month);
+
+    List<Diary> findByUserIdAndTitleContainingOrUserIdAndContentContainingAndDeletedFalse(Long userId, String titleKeyword, String contentKeyword);
+
 }
