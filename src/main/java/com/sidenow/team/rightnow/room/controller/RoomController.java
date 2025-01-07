@@ -5,15 +5,24 @@ import java.util.List;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import com.sidenow.team.rightnow.global.ex.CustomApiException;
+import com.sidenow.team.rightnow.character.dto.CharacterDTO;
 import com.sidenow.team.rightnow.character.entity.Character;
+import com.sidenow.team.rightnow.global.ResponseDto;
 import com.sidenow.team.rightnow.room.dto.RoomDTO;
 import com.sidenow.team.rightnow.room.entity.Room;
 import com.sidenow.team.rightnow.room.service.RoomService;
+import com.sidenow.team.rightnow.security.config.auth.LoginUser;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
+@Slf4j
 @RestController
-@RequestMapping("/api/")
+@RequestMapping("/api")
 public class RoomController {
 
     private final RoomService roomService;
@@ -22,30 +31,45 @@ public class RoomController {
         this.roomService = roomService;
     }
 
-    @PostMapping("/rooms")
-    public ResponseEntity<Void> create(@RequestBody RoomDTO roomDTO){
-        Room newRoom = roomDTO.toEntity();
-        roomService.createRoom(newRoom);
-        return ResponseEntity.created(URI.create("/rooms/" + newRoom.getId())).build();
-    }
-    @GetMapping("/rooms")
-    public ResponseEntity<List<RoomDTO>> read(){
-        List<RoomDTO> roomDTOs = roomService.getAllRooms().stream()
-                .map(RoomDTO::fromEntity)
-                .collect(Collectors.toList());
 
-        return ResponseEntity.ok().body(roomDTOs);
+    @PostMapping("/rooms")
+    public ResponseDto<Void> createRoom(
+            @AuthenticationPrincipal LoginUser loginUser,
+            @RequestBody RoomDTO roomDTO) {
+        try {
+            roomService.createRoom(loginUser.getUser().getId(), roomDTO);
+            return new ResponseDto<>(ResponseDto.SUCCESS, "방이 성공적으로 생성되었습니다.");
+        } catch (CustomApiException e) {
+            return new ResponseDto<>(ResponseDto.FAILURE, e.getMessage());
+        }
+    }
+
+    @GetMapping("selection")
+    public ResponseDto<Page<RoomDTO>> getRoom(
+            @AuthenticationPrincipal LoginUser loginUser, Pageable pageable) {
+        Page<RoomDTO> rooms = roomService.getRoom(loginUser.getUser().getId(), pageable);
+        return new ResponseDto<>(ResponseDto.SUCCESS, "방 조회가 완료되었습니다.", rooms);
     }
 
     @PutMapping("/rooms/{id}")
-    public ResponseEntity<Void> update(@RequestBody RoomDTO newRoomDTO, @PathVariable Long id) {
-        Room updatedRoom = roomService.updateRoom(id, newRoomDTO.toEntity());
-        return updatedRoom != null ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+    public ResponseDto<Void> updateRoom(
+            @AuthenticationPrincipal LoginUser loginUser,
+            @PathVariable Long id,
+            @RequestBody RoomDTO newRoomDTO) {
+        Room updatedRoom = roomService.updateRoom(id, newRoomDTO);
+        if(updatedRoom != null) {
+            return new ResponseDto<>(ResponseDto.SUCCESS, "방 색상 변경이 완료되었습니다.");
+        }
+        return new ResponseDto<>(ResponseDto.FAILURE, "방 색상 수정에 실패하였습니다.");
     }
 
     @DeleteMapping("/rooms/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseDto<Void> deleteRoom(@AuthenticationPrincipal LoginUser loginUser,
+                                        @PathVariable Long id) {
         boolean isDeleted = roomService.deleteRoom(id);
-        return isDeleted? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        if(isDeleted) {
+            return new ResponseDto<>(ResponseDto.SUCCESS, "방 색상이 삭제되었습니다.");
+        }
+        return new ResponseDto<>(ResponseDto.FAILURE, "방 색상 삭제를 실패하였습니다.");
     }
 }

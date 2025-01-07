@@ -1,11 +1,15 @@
 package com.sidenow.team.rightnow.room.entity;
 
+import com.sidenow.team.rightnow.user.entity.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity(name = "Room")
 @Getter
+@NoArgsConstructor
 public class Room {
 
     @Id
@@ -16,27 +20,19 @@ public class Room {
     @Enumerated(EnumType.STRING)
     private String color;
 
-    @NotBlank
-    private String user_id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    public Room(Long id, String color, String user_id){
-        this.id = id;
+
+    @Builder
+    public Room(String color, User user){
         this.color = color;
-        this.user_id = user_id;
-    }
-
-    public Room(String color, String user_id){
-        this.color = color;
-        this.user_id = user_id;
-    }
-
-    public static Room toEntity(Room room, Long id) {
-        return new Room(id, room.color, room.user_id);
+        this.user = user;
     }
 
     public void update(Room newRoom) {
         this.color = newRoom.color;
-        this.user_id = newRoom.user_id;
     }
 
 

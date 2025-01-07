@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import com.sidenow.team.rightnow.room.entity.Room;
 import com.sidenow.team.rightnow.room.entity.Roomtype;
+import com.sidenow.team.rightnow.user.entity.User;
 
 @Getter
 @Setter
@@ -14,19 +15,20 @@ import com.sidenow.team.rightnow.room.entity.Roomtype;
 public class RoomDTO {
     private Long id;
     private String color;
-    private String user_id;
+    private Long user_id;
 
     public static RoomDTO fromEntity(Room room) {
         return new RoomDTO(
                 room.getId(),
                 room.getColor(),
-                room.getUser_id()
+                room.getUser().getId()
         );
     }
 
-    public Room toEntity() {
+    public Room toEntity(User user) {
         return new Room(
-             this.id, this.color, this.user_id
+             this.color,
+                user
         );
     }
 }
