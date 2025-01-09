@@ -11,6 +11,8 @@ import com.sidenow.team.rightnow.user.repository.UserRepository;
 import com.sidenow.team.rightnow.acorn.repository.AcornRepository;
 import com.sidenow.team.rightnow.acorn.service.AcornService;
 
+import lombok.Builder;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -34,6 +36,22 @@ public class CharacterService {
     private final AcornRepository acornRepository;
     private final AcornService acornService;
 
+    @Transactional
+    public void createCharacter(Long userId, CharacterDTO characterDTO) {
+        User user = userRepository.findByIdAndDeletedFalse(userId)
+                .orElseThrow(() -> new CustomApiException("존재하지 않는 userId 입니다."));
+
+        acornService.withdrawAcorn(userId, 2);
+
+        Character character = Character.builder()
+                .character(characterDTO.getCharacter())
+                .user(user)
+                .build();
+
+        characterRepository.save(character);
+    }
+
+
     @Transactional(readOnly = true)
     public Page<CharacterDTO> getCharacter(Long userId, Pageable pageable) {
         User user = userRepository.findByIdAndDeletedFalse(userId)
@@ -49,7 +67,9 @@ public class CharacterService {
         Optional<Character> existingCharacter = characterRepository.findById(id);
         if (existingCharacter.isPresent()) {
             User user = userRepository.findByIdAndDeletedFalse(newCharacterDTO.getUserId())
-                            .orElseThrow(() -> new CustomApiException("존재하지 않는 userID 입니다."));
+
+                    .orElseThrow(() -> new CustomApiException("존재하지 않는 userID 입니다."));
+
 
             acornService.withdrawAcorn(user.getId(), 2);
 

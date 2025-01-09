@@ -29,7 +29,7 @@ public class UserController {
     }
 
     @PatchMapping("/myPage")
-    public ResponseDto<?> modifyPassword(@AuthenticationPrincipal LoginUser loginUser,
+    public ResponseDto<Void> modifyPassword(@AuthenticationPrincipal LoginUser loginUser,
         @RequestBody @Valid PasswordChangeRequestDto passwordChangeRequestDto) {
         userService.modifyUserPassword(loginUser.getUser().getId(), passwordChangeRequestDto);
         return new ResponseDto<>(ResponseDto.SUCCESS, "비밀번호 변경이 완료되었습니다.", null);

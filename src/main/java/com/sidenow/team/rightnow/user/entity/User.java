@@ -33,6 +33,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
+    @Column(nullable = false)
     @Temporal(TemporalType.DATE)
     private LocalDate birth;
 

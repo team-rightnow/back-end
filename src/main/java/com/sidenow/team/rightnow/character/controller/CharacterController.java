@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
+import com.sidenow.team.rightnow.global.ex.CustomApiException;
 import com.sidenow.team.rightnow.character.dto.CharacterDTO;
 import com.sidenow.team.rightnow.character.entity.Character;
 import com.sidenow.team.rightnow.character.service.CharacterService;
@@ -27,6 +28,7 @@ import static com.fasterxml.jackson.databind.type.LogicalType.Collection;
 
 @RestController
 @RequestMapping("/api/")
+
 @Slf4j
 public class CharacterController {
 
@@ -36,7 +38,21 @@ public class CharacterController {
         this.characterService = characterService;
     }
 
-    @GetMapping("selection")
+  
+    @PostMapping("/characters")
+    public ResponseDto<Void> createCharacter(
+            @AuthenticationPrincipal LoginUser loginUser,
+            @RequestBody CharacterDTO characterDTO) {
+        try{
+            characterService.createCharacter(loginUser.getUser().getId(), characterDTO);
+            return new ResponseDto<>(ResponseDto.SUCCESS, "캐릭터가 성공적으로 생성되었습니다.");
+        } catch (CustomApiException e) {
+            return new ResponseDto<>(ResponseDto.FAILURE, e.getMessage());
+        }
+
+    }
+  
+    @GetMapping("/characters/selection")
     public ResponseDto<Page<CharacterDTO>> getCharacter(
             @AuthenticationPrincipal LoginUser loginUser, Pageable pageable) {
         Page<CharacterDTO> characters = characterService.getCharacter(loginUser.getUser().getId(), pageable);
@@ -68,3 +84,4 @@ public class CharacterController {
     }
 
 }
+
