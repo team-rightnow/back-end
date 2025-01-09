@@ -27,7 +27,8 @@ import com.sidenow.team.rightnow.user.repository.UserRepository;
 import static com.fasterxml.jackson.databind.type.LogicalType.Collection;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/")
+
 @Slf4j
 public class CharacterController {
 
@@ -37,6 +38,7 @@ public class CharacterController {
         this.characterService = characterService;
     }
 
+  
     @PostMapping("/characters")
     public ResponseDto<Void> createCharacter(
             @AuthenticationPrincipal LoginUser loginUser,
@@ -49,6 +51,7 @@ public class CharacterController {
         }
 
     }
+  
     @GetMapping("/characters/selection")
     public ResponseDto<Page<CharacterDTO>> getCharacter(
             @AuthenticationPrincipal LoginUser loginUser, Pageable pageable) {

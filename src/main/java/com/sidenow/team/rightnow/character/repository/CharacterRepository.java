@@ -12,4 +12,3 @@ import java.util.Optional;
 public interface CharacterRepository extends JpaRepository<Character, Long> {
     Page<Character> findByUserId(Long userId, Pageable pageable);
 }
-

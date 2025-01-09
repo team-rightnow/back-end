@@ -1,18 +1,18 @@
-package com.sidenow.team.rightnow.character.service;
+package com.sidenow.team.rightnow.room.service;
 
 import com.sidenow.team.rightnow.acorn.dto.response.AcornCountResponseDto;
 import com.sidenow.team.rightnow.acorn.repository.AcornRepository;
-import com.sidenow.team.rightnow.character.entity.Character;
-import com.sidenow.team.rightnow.character.repository.CharacterRepository;
-import com.sidenow.team.rightnow.character.dto.CharacterDTO;
+import com.sidenow.team.rightnow.room.entity.Room;
+import com.sidenow.team.rightnow.room.repository.RoomRepository;
+import com.sidenow.team.rightnow.room.dto.RoomDTO;
 import com.sidenow.team.rightnow.global.ex.CustomApiException;
 import com.sidenow.team.rightnow.user.entity.User;
 import com.sidenow.team.rightnow.user.repository.UserRepository;
 import com.sidenow.team.rightnow.acorn.repository.AcornRepository;
 import com.sidenow.team.rightnow.acorn.service.AcornService;
+import com.sidenow.team.rightnow.room.repository.RoomRepository;
 
 import lombok.Builder;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -29,66 +29,61 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CharacterService {
+public class RoomService {
 
-    private final CharacterRepository characterRepository;
+    private final RoomRepository roomRepository;
     private final UserRepository userRepository;
-    private final AcornRepository acornRepository;
     private final AcornService acornService;
 
     @Transactional
-    public void createCharacter(Long userId, CharacterDTO characterDTO) {
+    public void createRoom(Long userId, RoomDTO roomDTO) {
         User user = userRepository.findByIdAndDeletedFalse(userId)
                 .orElseThrow(() -> new CustomApiException("존재하지 않는 userId 입니다."));
+
 
         acornService.withdrawAcorn(userId, 2);
 
-        Character character = Character.builder()
-                .character(characterDTO.getCharacter())
+        Room room = Room.builder()
+                .color(roomDTO.getColor())
                 .user(user)
                 .build();
 
-        characterRepository.save(character);
+        roomRepository.save(room);
     }
 
-
     @Transactional(readOnly = true)
-    public Page<CharacterDTO> getCharacter(Long userId, Pageable pageable) {
+    public Page<RoomDTO> getRoom(Long userId, Pageable pageable){
         User user = userRepository.findByIdAndDeletedFalse(userId)
                 .orElseThrow(() -> new CustomApiException("존재하지 않는 userId 입니다."));
 
-        return characterRepository.findByUserId(userId, pageable)
-                .map(CharacterDTO::fromEntity);
+        return roomRepository.findByUserId(userId, pageable)
+                .map(RoomDTO::fromEntity);
     }
 
-
-    @Transactional(readOnly = true)
-    public Character updateCharacter(Long id, CharacterDTO newCharacterDTO) {
-        Optional<Character> existingCharacter = characterRepository.findById(id);
-        if (existingCharacter.isPresent()) {
-            User user = userRepository.findByIdAndDeletedFalse(newCharacterDTO.getUserId())
-
+   @Transactional
+    public Room updateRoom(Long id, RoomDTO newRoomDTO) {
+        Optional<Room> existingRoom = roomRepository.findById(id);
+        if(existingRoom.isPresent()){
+            User user = userRepository.findByIdAndDeletedFalse(newRoomDTO.getUser_id())
                     .orElseThrow(() -> new CustomApiException("존재하지 않는 userID 입니다."));
-
 
             acornService.withdrawAcorn(user.getId(), 2);
 
-            Character character = existingCharacter.get();
-            character.update(new Character(newCharacterDTO.getCharacter(), user));
-            return characterRepository.save(character);
+            Room room = existingRoom.get();
+            room.update(new Room(newRoomDTO.getColor(), user));
+            return roomRepository.save(room);
         }
         return null;
     }
 
-    @Transactional(readOnly = true)
-    public boolean deleteCharacter(Long id) {
-        Optional<Character> character = characterRepository.findById(id);
-        if (character.isPresent()) {
-            characterRepository.delete(character.get());
+
+    @Transactional(readOnly = false)
+    public boolean deleteRoom(Long id) {
+        Optional<Room> room = roomRepository.findById(id);
+        if(room.isPresent()) {
+            roomRepository.delete(room.get());
             return true;
         }
         return false;
     }
-
-
 }

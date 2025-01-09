@@ -1,18 +1,16 @@
-package com.sidenow.team.rightnow.character.entity;
-
+package com.sidenow.team.rightnow.room.entity;
 
 import com.sidenow.team.rightnow.user.entity.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity(name = "characters")
+@Entity(name = "Room")
 @Getter
 @NoArgsConstructor
-public class Character {
+public class Room {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,21 +18,22 @@ public class Character {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private String character;
+    private String color;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Builder
 
-    public Character(String character, User user) {
-        this.character = character;
+    @Builder
+    public Room(String color, User user){
+        this.color = color;
         this.user = user;
     }
 
-    public void update(Character newCharacter){
-        this.character = newCharacter.character;
-
+    public void update(Room newRoom) {
+        this.color = newRoom.color;
     }
+
+
 }
