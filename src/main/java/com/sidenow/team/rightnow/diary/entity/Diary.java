@@ -37,14 +37,9 @@ public class Diary extends BaseEntity {
     @Column(nullable = false)
     private Integer temperature;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private InnerPage innerPage;
-
-    public void updateDiary(String title, String content, InnerPage innerPage, Integer temperature) {
+    public void updateDiary(String title, String content, Integer temperature) {
         this.title = title;
         this.content = content;
-        this.innerPage = innerPage;
         this.temperature = temperature;
     }
 }

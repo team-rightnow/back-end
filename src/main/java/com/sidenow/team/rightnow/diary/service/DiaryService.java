@@ -34,7 +34,6 @@ public class DiaryService {
                 .user(user)
                 .title(request.getTitle())
                 .content(request.getContent())
-                .innerPage(request.getInnerPage())
                 .temperature(request.getTemperature())
                 .deleted(false)
                 .build();
@@ -53,7 +52,7 @@ public class DiaryService {
             throw new CustomApiException(ResponseMessages.DIARY_PERMISSION_DENIED);
         }
 
-        diary.updateDiary(request.getTitle(), request.getContent(), request.getInnerPage(), request.getTemperature());
+        diary.updateDiary(request.getTitle(), request.getContent(), request.getTemperature());
         diaryRepository.save(diary);
 
         return new ResponseDto<>(ResponseDto.SUCCESS, ResponseMessages.DIARY_UPDATED_SUCCESS, null);
