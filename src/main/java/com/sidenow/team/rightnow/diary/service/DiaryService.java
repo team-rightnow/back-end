@@ -125,7 +125,7 @@ public class DiaryService {
 
     @Transactional(readOnly = true)
     public ResponseDto<List<DiaryResponseDto>> findByUserIdAndKeyword(Long userId, String keyword) {
-        List<Diary> diaries = diaryRepository.findByUserIdAndTitleContainingOrUserIdAndContentContainingAndDeletedFalse(userId, keyword, keyword);
+        List<Diary> diaries = diaryRepository.searchDiariesByKeyword(userId, keyword);
         List<DiaryResponseDto> responseDtos = diaries.stream()
                 .map(DiaryResponseDto::from)
                 .toList();
