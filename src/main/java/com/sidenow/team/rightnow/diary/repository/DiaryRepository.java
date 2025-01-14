@@ -12,6 +12,7 @@ import java.util.List;
 
 public interface DiaryRepository extends JpaRepository<Diary, Long> {
     List<Diary> findByUserIdAndDeletedFalse(Long userId);
+    List<Diary> findByUserIdAndDeletedTrue(Long userId);
 
     @Query("SELECT d FROM Diary d " +
             "WHERE d.user.id = :userId " +
