@@ -3,6 +3,7 @@ package com.sidenow.team.rightnow.diary.controller;
 import com.sidenow.team.rightnow.diary.dto.request.CreateDiaryRequestDto;
 import com.sidenow.team.rightnow.diary.dto.request.UpdateDiaryRequestDto;
 import com.sidenow.team.rightnow.diary.dto.response.DiaryResponseDto;
+import com.sidenow.team.rightnow.diary.entity.Diary;
 import com.sidenow.team.rightnow.diary.service.DiaryService;
 import com.sidenow.team.rightnow.global.ResponseDto;
 import com.sidenow.team.rightnow.global.ex.CustomApiException;
@@ -49,6 +50,13 @@ public class DiaryController {
             @PathVariable Long diaryId,
             @AuthenticationPrincipal LoginUser loginUser) {
         return diaryService.restoreDiary(diaryId, loginUser.getUser().getId());
+    }
+
+    @GetMapping("/trash")
+    public ResponseDto<List<DiaryResponseDto>> getDeletedDiary(
+            @AuthenticationPrincipal LoginUser loginUser
+    ) {
+        return diaryService.findAllDeletedDiariesByUser(loginUser.getUser().getId());
     }
 
     @GetMapping("/dates/{year}/{month}")

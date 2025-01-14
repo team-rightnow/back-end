@@ -88,6 +88,15 @@ public class DiaryService {
         return new ResponseDto<>(ResponseDto.SUCCESS, ResponseMessages.DIARY_RESTORE_SUCCESS, null);
     }
 
+    @Transactional(readOnly = true)
+    public ResponseDto<List<DiaryResponseDto>> findAllDeletedDiariesByUser(Long userId) {
+        List<Diary> diaries = diaryRepository.findByUserIdAndDeletedTrue(userId);
+        List<DiaryResponseDto> responseDtos = diaries.stream()
+                .map(DiaryResponseDto::from)
+                .toList();
+
+        return new ResponseDto<>(ResponseDto.SUCCESS, ResponseMessages.DIARY_FETCH_SUCCESS, responseDtos);
+    }
 
     @Transactional(readOnly = true)
     public ResponseDto<List<String>> findDiaryDatesByYearAndMonth(Long userId, int year, int month) {
