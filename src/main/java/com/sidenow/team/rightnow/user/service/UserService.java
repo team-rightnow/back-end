@@ -1,43 +1,52 @@
 package com.sidenow.team.rightnow.user.service;
 
-import com.sidenow.team.rightnow.global.ResponseDto;
-import com.sidenow.team.rightnow.user.dto.CreateUserRequestDto;
+import com.sidenow.team.rightnow.global.ex.CustomApiException;
+import com.sidenow.team.rightnow.user.dto.request.BirthChangeRequestDto;
+import com.sidenow.team.rightnow.user.dto.request.PasswordChangeRequestDto;
+import com.sidenow.team.rightnow.user.dto.response.UserResponseDto;
 import com.sidenow.team.rightnow.user.entity.User;
-import com.sidenow.team.rightnow.user.entity.UserRole;
 import com.sidenow.team.rightnow.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
-
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public ResponseDto<?> createUser(CreateUserRequestDto request) {
-        // 이메일 중복확인
-        if(userRepository.findByEmail(request.getEmail()).isPresent()) {
-            return new ResponseDto<>(-1, "중복된 이메일입니다", null);
+    @Transactional(readOnly = true)
+    public UserResponseDto getUser(Long id) {
+        User user = userRepository.findByIdAndDeletedFalse(id).orElseThrow(
+                ()-> new CustomApiException("존재하지 않는 userId 입니다.")
+        );
+        return new UserResponseDto(user);
+    }
+
+    @Transactional
+    public void modifyUserPassword(Long id, PasswordChangeRequestDto passwordChangeRequestDto) {
+        User user = userRepository.findByIdAndDeletedFalse(id).orElseThrow(
+                ()-> new CustomApiException("존재하지 않는 userId 입니다.")
+        );
+
+        if (!passwordEncoder.matches(passwordChangeRequestDto.getNowPassword(), user.getPassword())) {
+            throw new CustomApiException("현재 비밀번호가 일치하지 않습니다.");
         }
-        // 닉네임 중복확인
-        if(userRepository.findByNickname(request.getNickname()).isPresent()) {
-            return new ResponseDto<>(-1, "중복된 닉네임입니다", null);
-        }
 
-        User user = User.builder()
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .nickname(request.getNickname())
-                .userRole(UserRole.MEMBER)
-                .birth(request.getBirth())
-                .useYn(true)
-                .build();
-
+        user.changePassword(passwordEncoder.encode(passwordChangeRequestDto.getNewPassword()));
         userRepository.save(user);
-        return new ResponseDto<>(1, "회원가입이 완료되었습니다", null);
+    }
+
+    @Transactional
+    public void modifyUserBirth(Long id, BirthChangeRequestDto birthChangeRequestDto) {
+        User user = userRepository.findByIdAndDeletedFalse(id).orElseThrow(
+                ()-> new CustomApiException("존재하지 않는 userId 입니다.")
+        );
+
+        user.changeBirth(birthChangeRequestDto.getBirth());
     }
 }
