@@ -3,6 +3,7 @@ package com.sidenow.team.rightnow.security.config.jwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sidenow.team.rightnow.global.ex.CustomResponseUtil;
 import com.sidenow.team.rightnow.security.config.auth.LoginUser;
+import com.sidenow.team.rightnow.user.dto.request.LoginUserRequestDto;
 import com.sidenow.team.rightnow.user.dto.response.LoginUserResponseDto;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
