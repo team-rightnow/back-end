@@ -2,6 +2,7 @@ package com.sidenow.team.rightnow.user.controller;
 
 import com.sidenow.team.rightnow.global.ResponseDto;
 import com.sidenow.team.rightnow.security.config.auth.LoginUser;
+import com.sidenow.team.rightnow.user.dto.request.BirthChangeRequestDto;
 import com.sidenow.team.rightnow.user.dto.request.PasswordChangeRequestDto;
 import com.sidenow.team.rightnow.user.dto.response.UserResponseDto;
 import com.sidenow.team.rightnow.user.service.UserService;
@@ -28,11 +29,18 @@ public class UserController {
         return new ResponseDto<>(ResponseDto.SUCCESS, "마이페이지 조회가 완료되었습니다.", user);
     }
 
-    @PatchMapping("/myPage")
+    @PatchMapping("/password")
     public ResponseDto<Void> modifyPassword(@AuthenticationPrincipal LoginUser loginUser,
         @RequestBody @Valid PasswordChangeRequestDto passwordChangeRequestDto) {
         userService.modifyUserPassword(loginUser.getUser().getId(), passwordChangeRequestDto);
         return new ResponseDto<>(ResponseDto.SUCCESS, "비밀번호 변경이 완료되었습니다.", null);
+    }
+
+    @PatchMapping("/birth")
+    public ResponseDto<Void> modifyBirth(@AuthenticationPrincipal LoginUser loginUser,
+        @RequestBody @Valid BirthChangeRequestDto birthChangeRequestDto) {
+        userService.modifyUserBirth(loginUser.getUser().getId(), birthChangeRequestDto);
+        return new ResponseDto<>(ResponseDto.SUCCESS, "생년월일 변경이 완료되었습니다.", null);
     }
 
 }
