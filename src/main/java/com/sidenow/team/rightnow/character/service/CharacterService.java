@@ -52,7 +52,7 @@ public class CharacterService {
     }
 
 
-    @Transactional(readOnly = true)
+    @Transactional
     public Page<CharacterDTO> getCharacter(Long userId, Pageable pageable) {
         User user = userRepository.findByIdAndDeletedFalse(userId)
                 .orElseThrow(() -> new CustomApiException("존재하지 않는 userId 입니다."));
@@ -62,25 +62,25 @@ public class CharacterService {
     }
 
 
-    @Transactional(readOnly = true)
+    @Transactional
     public Character updateCharacter(Long id, CharacterDTO newCharacterDTO) {
-        Optional<Character> existingCharacter = characterRepository.findById(id);
-        if (existingCharacter.isPresent()) {
-            User user = userRepository.findByIdAndDeletedFalse(newCharacterDTO.getUserId())
 
-                    .orElseThrow(() -> new CustomApiException("존재하지 않는 userID 입니다."));
+        Character character = characterRepository.findById(id)
+                .orElseThrow(() -> new CustomApiException("존재하지 않는 캐릭터입니다."));
 
 
-            acornService.withdrawAcorn(user.getId(), 2);
+        User user = userRepository.findByIdAndDeletedFalse(newCharacterDTO.getUserId())
+                .orElseThrow(() -> new CustomApiException("존재하지 않는 userID 입니다."));
 
-            Character character = existingCharacter.get();
-            character.update(new Character(newCharacterDTO.getCharacter(), user));
-            return characterRepository.save(character);
-        }
-        return null;
+
+        acornService.withdrawAcorn(user.getId(), 5);
+
+        character.update(new Character(newCharacterDTO.getCharacter(), user).getCharacter());
+        return characterRepository.save(character);
     }
 
-    @Transactional(readOnly = true)
+
+    @Transactional
     public boolean deleteCharacter(Long id) {
         Optional<Character> character = characterRepository.findById(id);
         if (character.isPresent()) {
