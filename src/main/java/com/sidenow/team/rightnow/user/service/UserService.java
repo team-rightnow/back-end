@@ -31,6 +31,11 @@ public class UserService {
         User user = userRepository.findByIdAndDeletedFalse(id).orElseThrow(
             ()-> new CustomApiException("존재하지 않는 userId 입니다.")
         );
+
+        if (!passwordEncoder.matches(passwordChangeRequestDto.getNowPassword(), user.getPassword())) {
+            throw new CustomApiException("현재 비밀번호가 일치하지 않습니다.");
+        }
+
         user.changePassword(passwordEncoder.encode(passwordChangeRequestDto.getNewPassword()));
         userRepository.save(user);
     }
