@@ -19,6 +19,7 @@ import java.time.LocalDate;
 @ToString
 @Builder
 public class CreateUserRequestDto {
+
     @NotBlank
     @Email
     private String email;
