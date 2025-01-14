@@ -1,6 +1,7 @@
 package com.sidenow.team.rightnow.user.service;
 
 import com.sidenow.team.rightnow.global.ex.CustomApiException;
+import com.sidenow.team.rightnow.user.dto.request.BirthChangeRequestDto;
 import com.sidenow.team.rightnow.user.dto.request.PasswordChangeRequestDto;
 import com.sidenow.team.rightnow.user.dto.response.UserResponseDto;
 import com.sidenow.team.rightnow.user.entity.User;
@@ -38,5 +39,14 @@ public class UserService {
 
         user.changePassword(passwordEncoder.encode(passwordChangeRequestDto.getNewPassword()));
         userRepository.save(user);
+    }
+
+    @Transactional
+    public void modifyUserBirth(Long id, BirthChangeRequestDto birthChangeRequestDto) {
+        User user = userRepository.findByIdAndDeletedFalse(id).orElseThrow(
+            ()-> new CustomApiException("존재하지 않는 userId 입니다.")
+        );
+
+        user.changeBirth(birthChangeRequestDto.getBirth());
     }
 }
