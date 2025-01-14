@@ -5,9 +5,9 @@ import lombok.Getter;
 
 @Getter
 public class CreateUserResponseDto {
-  private Long userId;
+    private Long userId;
 
-  public CreateUserResponseDto(User user) {
-    this.userId = user.getId();
-  }
+    public CreateUserResponseDto(User user) {
+        this.userId = user.getId();
+    }
 }

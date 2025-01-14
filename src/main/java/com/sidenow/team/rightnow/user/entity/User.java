@@ -57,7 +57,7 @@ public class User {
         this.acornCount -= withdraw;
     }
 
-  public void changeBirth(LocalDate birth) {
+    public void changeBirth(LocalDate birth) {
         this.birth = birth;
-  }
+    }
 }

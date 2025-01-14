@@ -22,7 +22,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserResponseDto getUser(Long id) {
         User user = userRepository.findByIdAndDeletedFalse(id).orElseThrow(
-            ()-> new CustomApiException("존재하지 않는 userId 입니다.")
+                ()-> new CustomApiException("존재하지 않는 userId 입니다.")
         );
         return new UserResponseDto(user);
     }
@@ -30,7 +30,7 @@ public class UserService {
     @Transactional
     public void modifyUserPassword(Long id, PasswordChangeRequestDto passwordChangeRequestDto) {
         User user = userRepository.findByIdAndDeletedFalse(id).orElseThrow(
-            ()-> new CustomApiException("존재하지 않는 userId 입니다.")
+                ()-> new CustomApiException("존재하지 않는 userId 입니다.")
         );
 
         if (!passwordEncoder.matches(passwordChangeRequestDto.getNowPassword(), user.getPassword())) {
@@ -44,7 +44,7 @@ public class UserService {
     @Transactional
     public void modifyUserBirth(Long id, BirthChangeRequestDto birthChangeRequestDto) {
         User user = userRepository.findByIdAndDeletedFalse(id).orElseThrow(
-            ()-> new CustomApiException("존재하지 않는 userId 입니다.")
+                ()-> new CustomApiException("존재하지 않는 userId 입니다.")
         );
 
         user.changeBirth(birthChangeRequestDto.getBirth());

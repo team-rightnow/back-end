@@ -17,32 +17,32 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-  private final UserRepository userRepository;
-  private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-  @Transactional
-  public CreateUserResponseDto createUser(CreateUserRequestDto request) {
-    // 이메일 중복확인
-    if(userRepository.findByEmailAndDeletedFalse(request.getEmail()).isPresent()) {
-      throw new CustomApiException("중복된 이메일입니다.");
+    @Transactional
+    public CreateUserResponseDto createUser(CreateUserRequestDto request) {
+        // 이메일 중복확인
+        if(userRepository.findByEmailAndDeletedFalse(request.getEmail()).isPresent()) {
+            throw new CustomApiException("중복된 이메일입니다.");
+        }
+        // 닉네임 중복확인
+        if(userRepository.findByNicknameAndDeletedFalse(request.getNickname()).isPresent()) {
+            throw new CustomApiException("중복된 닉네임입니다.");
+        }
+
+        User user = User.builder()
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .nickname(request.getNickname())
+                .userRole(UserRole.MEMBER)
+                .birth(request.getBirth())
+                .acornCount(10)
+                .deleted(false)
+                .build();
+
+        User savedUser = userRepository.save(user);
+        return new CreateUserResponseDto(savedUser);
     }
-    // 닉네임 중복확인
-    if(userRepository.findByNicknameAndDeletedFalse(request.getNickname()).isPresent()) {
-      throw new CustomApiException("중복된 닉네임입니다.");
-    }
-
-    User user = User.builder()
-        .email(request.getEmail())
-        .password(passwordEncoder.encode(request.getPassword()))
-        .nickname(request.getNickname())
-        .userRole(UserRole.MEMBER)
-        .birth(request.getBirth())
-        .acornCount(10)
-        .deleted(false)
-        .build();
-
-    User savedUser = userRepository.save(user);
-    return new CreateUserResponseDto(savedUser);
-  }
 
 }
