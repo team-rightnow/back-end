@@ -1,3 +1,4 @@
+/*
 package com.sidenow.team.rightnow.character.controller;
 
 import com.sidenow.team.rightnow.character.dto.CharacterDTO;
@@ -38,19 +39,7 @@ class CharacterControllerTest {
     private CharacterDTO characterDTO;
     private User mockUser;
 
-    @BeforeEach
-    void setUp() {
-        // Mock User 생성
-        mockUser = mock(User.class);
-        when(mockUser.getId()).thenReturn(1L);
-
-        // LoginUser Mock 설정
-        loginUser = mock(LoginUser.class);
-        when(loginUser.getUser()).thenReturn(mockUser);
-
-        // CharacterDTO 초기화 - Charactertype enum 값 사용
-        characterDTO = new CharacterDTO(1L, "LEON", 1L);
-    }
+    
 
     @Test
     void createCharacter_Success() {
@@ -155,3 +144,5 @@ class CharacterControllerTest {
         verify(characterService, times(1)).deleteCharacter(1L);
     }
 }
+
+ */

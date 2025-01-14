@@ -8,14 +8,13 @@ import lombok.Setter;
 import com.sidenow.team.rightnow.character.entity.Character;
 import com.sidenow.team.rightnow.character.entity.Charactertype;
 
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class CharacterDTO {
     private Long id;
-    private String character;
+    private Charactertype character;
     private Long userId;
 
     public static CharacterDTO fromEntity(Character character){
