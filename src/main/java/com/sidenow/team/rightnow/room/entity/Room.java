@@ -17,15 +17,16 @@ public class Room {
     private Long id;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING) // EnumType.STRING으로 Enum 값을 문자열로 저장
-    private Roomtype color; // String -> Roomtype으로 변경
+    @Enumerated(EnumType.STRING)
+    private String color;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+
     @Builder
-    public Room(Roomtype color, User user) { // String -> Roomtype으로 변경
+    public Room(String color, User user){
         this.color = color;
         this.user = user;
     }
@@ -33,4 +34,6 @@ public class Room {
     public void update(Room newRoom) {
         this.color = newRoom.color;
     }
+
+
 }
