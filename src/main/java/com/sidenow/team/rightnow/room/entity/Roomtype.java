@@ -3,7 +3,6 @@ package com.sidenow.team.rightnow.room.entity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-
 @Getter
 @AllArgsConstructor
 public enum Roomtype {
@@ -16,5 +15,5 @@ public enum Roomtype {
     BROWN("BROWN"),
     BLACK("BLACK");
 
-    private String room;
+    private final String room;
 }

@@ -20,14 +20,14 @@ public class RoomDTO {
     public static RoomDTO fromEntity(Room room) {
         return new RoomDTO(
                 room.getId(),
-                room.getColor(),
+                room.getColor().name(),
                 room.getUser().getId()
         );
     }
 
     public Room toEntity(User user) {
         return new Room(
-             this.color,
+                Roomtype.valueOf(this.color),
                 user
         );
     }
