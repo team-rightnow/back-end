@@ -18,15 +18,14 @@ public class Room {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private String color;
+    private Roomtype color;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-
     @Builder
-    public Room(String color, User user){
+    public Room(Roomtype color, User user) {
         this.color = color;
         this.user = user;
     }
@@ -34,6 +33,4 @@ public class Room {
     public void update(Room newRoom) {
         this.color = newRoom.color;
     }
-
-
 }
